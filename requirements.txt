@@ -1,0 +1,5 @@
+Flask
+gspread
+oauth2client
+feedparser
+openai
