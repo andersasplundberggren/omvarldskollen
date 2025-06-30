@@ -5,5 +5,3 @@ oauth2client
 openai
 smtplib3
 email-validator
-
-Add requirements.txt
