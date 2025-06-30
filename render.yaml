@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: omvarldskollen
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python main.py"
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: EMAIL_ADDRESS
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+
+  - type: cron
+    name: omvarldskollen-cron
+    env: python
+    schedule: "0 8 * * *"  # kör varje dag 08:00
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "curl https://din-render-web-url/run"
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: EMAIL_ADDRESS
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
