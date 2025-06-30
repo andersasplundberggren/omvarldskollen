@@ -3,5 +3,4 @@ feedparser
 gspread
 oauth2client
 openai
-smtplib3
 email-validator
