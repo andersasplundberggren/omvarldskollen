@@ -17,9 +17,19 @@ SHEET_ID = "1yXACANpZs6aiGty1vDno5t6WX447yUJIC-hi4-tBDrQ"
 MAX_ARTICLES = 10
 
 def get_creds():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds_dict = json.loads(os.environ["GOOGLE_CREDS_JSON"])
-    return ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    try:
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        creds_json = os.environ.get("GOOGLE_CREDS_JSON")
+        if not creds_json:
+            raise ValueError("❌ Miljövariabeln GOOGLE_CREDS_JSON är inte satt eller är tom.")
+        creds_dict = json.loads(creds_json)
+        return ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    except json.JSONDecodeError:
+        print("❌ JSON i GOOGLE_CREDS_JSON är ogiltig. Kontrollera formatet!")
+        raise
+    except Exception as e:
+        print(f"❌ Fel vid inläsning av Google credentials: {e}")
+        raise
 
 def get_auto_mode():
     with open(SETTINGS_FILE, "r") as f:
