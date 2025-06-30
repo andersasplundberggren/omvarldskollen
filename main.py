@@ -16,6 +16,11 @@ SETTINGS_FILE = "settings.json"
 SHEET_ID = "1yXACANpZs6aiGty1vDno5t6WX447yUJIC-hi4-tBDrQ"
 MAX_ARTICLES = 10
 
+def get_creds():
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds_dict = json.loads(os.environ["GOOGLE_CREDS_JSON"])
+    return ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+
 def get_auto_mode():
     with open(SETTINGS_FILE, "r") as f:
         return json.load(f).get("auto_mode", False)
@@ -25,8 +30,7 @@ def set_auto_mode(value: bool):
         json.dump({"auto_mode": value}, f)
 
 def load_system_settings(sheet_id):
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    creds = get_creds()
     client = gspread.authorize(creds)
     sheet = client.open_by_key(sheet_id).worksheet("Settings")
     rows = sheet.get_all_values()
@@ -34,8 +38,7 @@ def load_system_settings(sheet_id):
     return settings
 
 def load_user_configs(sheet_id, run_time):
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    creds = get_creds()
     client = gspread.authorize(creds)
     sheet = client.open_by_key(sheet_id).worksheet("Users")
     rows = sheet.get_all_values()[1:]
@@ -118,7 +121,6 @@ def send_email(summaries, recipient, name, settings):
 
         html = f"""
         <html><body style='font-family:Arial,sans-serif;'>
-       
         <h2>Hej {name} 👋</h2>
         <p>Här kommer dagens omvärldsbevakning:</p>
         <p><i>{overview}</i></p>
@@ -172,8 +174,7 @@ def home():
 
 @app.route("/dashboard")
 def dashboard():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    creds = get_creds()
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SHEET_ID).worksheet("Users")
     rows = sheet.get_all_values()
@@ -208,8 +209,7 @@ def run_user():
 
     email = email.strip()
 
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    creds = get_creds()
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SHEET_ID).worksheet("Users")
     rows = sheet.get_all_values()
@@ -239,8 +239,7 @@ def edit_user():
 
     email = email.strip()
 
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+    creds = get_creds()
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SHEET_ID).worksheet("Users")
     all_rows = sheet.get_all_values()
@@ -274,8 +273,6 @@ def edit_user():
             return render_template("edit_user.html", user=user)
 
     return "❌ Användare hittades inte", 404
-
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
