@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Adminpanel – Omvärldskollen</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: 0.5em; border: 1px solid #ccc; }
+    th { background: #eee; }
+    button.emoji-button {
+      background: none;
+      border: none;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin: 0 4px;
+    }
+    button.emoji-button:hover {
+      transform: scale(1.2);
+    }
+    .status-box {
+      background: #f9f9f9;
+      padding: 1em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1em;
+    }
+  </style>
+  <script>
+    function confirmAction(url, message) {
+      if (confirm(message)) {
+        fetch(url)
+          .then(response => response.text())
+          .then(data => alert(data))
+          .catch(error => alert("Fel uppstod: " + error));
+      }
+    }
+  </script>
+</head>
+<body style="font-family:sans-serif; padding:2em; max-width:1000px; margin:auto;">
+  <h1>📊 Adminpanel – Omvärldskollen</h1>
+
+  <div class="status-box">
+    <p><strong>Automatisering:</strong> {{ 'På ✅' if auto_mode else 'Av ⛔️' }}</p>
+    <p><strong>Tillåtna klockslag:</strong> {{ scheduled }}</p>
+    <p><strong>Manuell körning:</strong> {{ 'Tillåten 🟢' if manual_allowed else 'Inte tillåten 🔴' }}</p>
+    <a href="/toggle"><button>Växla global automatisering</button></a>
+    <a href="/run"><button style="margin-left: 1em;">Kör för alla nu ▶️</button></a>
+  </div>
+
+  <h2>Användare</h2>
+  <table>
+    <tr>
+      <th>Namn</th>
+      <th>E-post</th>
+      <th>Feeds</th>
+      <th>Nyckelord</th>
+      <th>Schema</th>
+      <th>Aktiv</th>
+      <th>Åtgärder</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+      <td>{{ user['Name'] }}</td>
+      <td>{{ user['Email'] }}</td>
+      <td>{{ user['Feeds'] }}</td>
+      <td>{{ user['Keywords'] }}</td>
+      <td>{{ user['Schedule'] }}</td>
+      <td>{{ '✅' if user['Active']|lower == 'true' else '⛔️' }}</td>
+      <td>
+        <button class="emoji-button" title="Kör omvärldsbevakning nu"
+          onclick="confirmAction('/run_user?email={{ user['Email'] }}', 'Köra bevakning nu för {{ user['Name'] }}?')">▶️</button>
+
+        <a href="/edit_user?email={{ user['Email'] }}" title="Redigera användare">
+          <button class="emoji-button">✏️</button>
+        </a>
+
+        <button class="emoji-button" title="Ta bort användare"
+          onclick="confirmAction('/delete_user?email={{ user['Email'] }}', 'Ta bort användare {{ user['Name'] }}?')">🗑</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <br>
+  <a href="/add_user">➕ Lägg till ny användare</a>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <title>Lägg till mottagare</title>
+</head>
+<body style="font-family:sans-serif; padding:2em; max-width:600px; margin:auto;">
+  <h1>➕ Lägg till ny mottagare</h1>
+
+  <form action="/add_user" method="POST">
+    <label>Namn:<br>
+      <input type="text" name="name" required>
+    </label><br><br>
+
+    <label>E-postadress:<br>
+      <input type="email" name="email" required>
+    </label><br><br>
+
+    <label>Ange vila RSS-flöden du vill följa (separera med semikolon):<br>
+      <input type="text" name="feeds" required>
+    </label><br><br>
+
+    <label>Nyckelord som ska bevakas i de RSS-flöden du angett (separera med kommatecken):<br>
+      <input type="text" name="keywords" required>
+    </label><br><br>
+
+    <label>Schema:<br>
+      <select name="schedule">
+        <option value="morgon">Morgon</option>
+        <option value="kväll">Kväll</option>
+        <option value="båda">Båda</option>
+      </select>
+    </label><br><br>
+
+    <label>
+      <input type="checkbox" name="active" checked>
+      Aktiv prenumerant
+    </label><br><br>
+
+    <button type="submit" style="padding:0.7em 1.5em;">Lägg till</button>
+  </form>
+
+  <br>
+ 
+</body>
+</html>
