@@ -1,5 +1,7 @@
-Flask
+flask
+feedparser
 gspread
 oauth2client
-feedparser
 openai
+smtplib3
+email-validator
